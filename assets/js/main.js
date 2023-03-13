@@ -1,3 +1,20 @@
+const image = document.getElementById("profile-image");
+image.addEventListener("click", () => {
+  const images = [
+    "./assets/imagens/avatar/avatar1.png",
+    "./assets/imagens/avatar/avatar2.png",
+    "./assets/imagens/avatar/avatar3.png",
+    "./assets/imagens/avatar/avatar4.png",
+    "./assets/imagens/avatar/avatar5.png",
+    "./assets/imagens/avatar/avatar6.png",
+    "./assets/imagens/avatar/avatar7.png",
+    "./assets/imagens/avatar/avatar8.png",
+  ];
+
+  const randomImage = images[Math.floor(Math.random() * images.length)];
+  image.setAttribute("href", randomImage);
+});
+
 const navMenu = document.getElementById("nav-menu"),
   navToggle = document.getElementById("nav-toggle"),
   navClose = document.getElementById("nav-close");

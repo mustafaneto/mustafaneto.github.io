@@ -1208,5 +1208,7 @@ img {
     bottom: -4.5rem;
   }
 
-  
+  #profile-image:hover{
+    cursor: pointer;
+  }
 }
