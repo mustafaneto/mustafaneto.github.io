@@ -154,16 +154,29 @@ const selectedTheme = localStorage.getItem('selected-theme')
 const selectedIcon = localStorage.getItem('selected-icon')
 
 const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
-const getCurrentIcon = () => themeButton.classList.contais(iconTheme) ? 'uil-moon' : 'uil-sun'
+const getCurrentIcon = () => themeButton.classList.contains(iconTheme) ? 'uil-moon' : 'uil-sun'
 
 if(selectedTheme) {
   document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
   themeButton.classList[selectedIcon === 'uil-sun' ? 'add' : 'remove'](iconTheme)
 }
 
+function changeLogoImage() {
+  var image = document.getElementById('imagemLogo');
+  if (image.src.match("/assets/imagens/logo/logo-semfundo.png")) {
+    image.src = "/assets/imagens/logo/logo-semfundo-branco.png";
+  } else {
+    image.src = "/assets/imagens/logo/logo-semfundo.png";
+  }
+}
+
 themeButton.addEventListener('click', () => {
+  changeLogoImage()
   document.body.classList.toggle(darkTheme)
   themeButton.classList.toggle(iconTheme)
   localStorage.setItem('selected-theme', getCurrentTheme())
   localStorage.setItem('selected-icon', getCurrentIcon())
+  localStorage.setItem('selected-image', document.getElementById('imagemLogo').src)
 })
+
+document.getElementById('imagemLogo').src = localStorage.getItem('selected-image') || '/assets/imagens/logo/logo-semfundo.png';
