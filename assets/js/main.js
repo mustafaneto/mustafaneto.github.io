@@ -152,6 +152,7 @@ const iconTheme = 'uil-sun'
 
 const selectedTheme = localStorage.getItem('selected-theme')
 const selectedIcon = localStorage.getItem('selected-icon')
+let selectedImage = localStorage.getItem('selected-image')
 
 const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
 const getCurrentIcon = () => themeButton.classList.contains(iconTheme) ? 'uil-moon' : 'uil-sun'
@@ -160,6 +161,13 @@ if(selectedTheme) {
   document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
   themeButton.classList[selectedIcon === 'uil-sun' ? 'add' : 'remove'](iconTheme)
 }
+
+if(!selectedImage) {
+  selectedImage = getCurrentTheme() === 'dark' ? '/assets/imagens/logo/logo-semfundo-branco.png' : '/assets/imagens/logo/logo-semfundo.png'
+  localStorage.setItem('selected-image', selectedImage)
+}
+
+document.getElementById('imagemLogo').src = selectedImage
 
 function changeLogoImage() {
   var image = document.getElementById('imagemLogo');
@@ -178,5 +186,3 @@ themeButton.addEventListener('click', () => {
   localStorage.setItem('selected-icon', getCurrentIcon())
   localStorage.setItem('selected-image', document.getElementById('imagemLogo').src)
 })
-
-document.getElementById('imagemLogo').src = localStorage.getItem('selected-image') || '/assets/imagens/logo/logo-semfundo.png';
