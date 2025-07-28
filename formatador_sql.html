@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formatador SQL | Mustafa Neto</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+  </head>
+
+  <body>
+    <header class="header" id="header">
+      <nav class="nav container">
+        <a href="index.html" class="nav__logo">Mustafa</a>
+
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list grid">
+            <li class="nav__item">
+              <a href="index.html" class="nav__link">
+                <i class="uil uil-estate nav__icon"></i>
+                Voltar ao Portfolio
+              </a>
+            </li>
+          </ul>
+
+          <i class="uil uil-times nav__close" id="nav-close"></i>
+        </div>
+
+        <div class="nav__btns">
+          <i class="uil uil-moon change-theme" id="theme-button"></i>
+
+          <div class="nav__toggle" id="nav-toggle">
+            <i class="uil uil-apps"></i>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main">
+      <section class="utilities section" id="utilities">
+        <h2 class="section__title">Formatador SQL</h2>
+        <span class="section__subtitle">Ferramenta para formatar consultas SQL</span>
+
+        <div class="utilities__container container grid">
+          <!-- Ferramenta de Formatação SQL -->
+          <div class="utilities__content">
+            <div class="utilities__header">
+              <i class="uil uil-database utilities__icon"></i>
+              <h3 class="utilities__title">Formatador SQL</h3>
+            </div>
+            
+            <div class="utilities__tool">
+              <div class="utilities__input-group">
+                <label for="sql-input" class="utilities__label">SQL não formatado:</label>
+                <textarea 
+                  id="sql-input" 
+                  class="utilities__textarea" 
+                  placeholder="Cole seu SQL aqui..."
+                  rows="10"
+                >"\n SELECT \t\t\t DATE_FORMAT(situation, \"%d/%m/%Y\") from \n class_classes"</textarea>
+              </div>
+              
+              <div class="utilities__buttons">
+                <button id="format-sql-btn" class="button button--flex button--small">
+                  <i class="uil uil-refresh button__icon"></i>
+                  Formatar SQL
+                </button>
+                <button id="clear-sql-btn" class="button button--flex button--small button--white">
+                  <i class="uil uil-trash-alt button__icon"></i>
+                  Limpar
+                </button>
+              </div>
+              
+              <div class="utilities__output-group">
+                <label for="sql-output" class="utilities__label">SQL formatado:</label>
+                <textarea 
+                  id="sql-output" 
+                  class="utilities__textarea utilities__output" 
+                  placeholder="Resultado da formatação aparecerá aqui..."
+                  rows="10"
+                  readonly
+                ></textarea>
+                <button id="copy-sql-btn" class="button button--flex button--small">
+                  <i class="uil uil-copy button__icon"></i>
+                  Copiar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__bg">
+        <div class="footer__container container grid">
+          <div>
+            <h1 class="footer__title">Mustafa</h1>
+            <span class="footer__subtitle"> Desenvolvedor Fullstack </span>
+          </div>
+
+          <ul class="footer__links">
+            <li>
+              <a href="index.html" class="footer__link">Portfolio</a>
+            </li>
+          </ul>
+
+          <div class="footer__socials">
+            <a
+              href="https://github.com/mustafaneto"
+              target="_blank"
+              class="footer__social"
+              ><i class="uil uil-github-alt"></i
+            ></a>
+
+            <a
+              href="https://www.linkedin.com/in/mustafaneto/"
+              target="_blank"
+              class="footer__social"
+              ><i class="uil uil-linkedin-alt"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <a href="#" class="scrollup" id="scroll-up">
+      <i class="uil uil-arrow-up scrollup__icon"></i>
+    </a>
+
+    <script>
+      // Aguardar o DOM carregar completamente
+      document.addEventListener('DOMContentLoaded', function() {
+        // SQL Formatter
+        const sqlInput = document.getElementById('sql-input');
+        const sqlOutput = document.getElementById('sql-output');
+        const formatSqlBtn = document.getElementById('format-sql-btn');
+        const clearSqlBtn = document.getElementById('clear-sql-btn');
+        const copySqlBtn = document.getElementById('copy-sql-btn');
+
+        function formatSQL(sql) {
+          if (!sql) return '';
+          
+          // Remove aspas duplas no início e fim da string
+          let formatted = sql.replace(/^"/, '').replace(/"$/, '');
+          
+          // Primeiro, substitui \n por quebras de linha reais
+          formatted = formatted.replace(/\\n/g, '\n');
+          
+          // Depois, substitui \t por espaços (4 espaços para cada tab)
+          formatted = formatted.replace(/\\t/g, '    ');
+          
+          // Remove todas as barras invertidas restantes (incluindo as das aspas)
+          formatted = formatted.replace(/\\/g, '');
+          
+          // Remove espaços em branco desnecessários no início e fim
+          formatted = formatted.trim();
+          
+          return formatted;
+        }
+
+        function copyToClipboard(text) {
+          navigator.clipboard.writeText(text).then(() => {
+            // Feedback visual temporário
+            const originalText = copySqlBtn.innerHTML;
+            copySqlBtn.innerHTML = '<i class="uil uil-check button__icon"></i>Copiado!';
+            copySqlBtn.style.backgroundColor = 'var(--first-color)';
+            
+            setTimeout(() => {
+              copySqlBtn.innerHTML = originalText;
+              copySqlBtn.style.backgroundColor = '';
+            }, 2000);
+          }).catch(err => {
+            console.error('Erro ao copiar: ', err);
+          });
+        }
+
+        if (formatSqlBtn) {
+          formatSqlBtn.addEventListener('click', () => {
+            const input = sqlInput.value;
+            const formatted = formatSQL(input);
+            sqlOutput.value = formatted;
+          });
+        }
+
+        if (clearSqlBtn) {
+          clearSqlBtn.addEventListener('click', () => {
+            sqlInput.value = '';
+            sqlOutput.value = '';
+          });
+        }
+
+        if (copySqlBtn) {
+          copySqlBtn.addEventListener('click', () => {
+            const output = sqlOutput.value;
+            if (output) {
+              copyToClipboard(output);
+            }
+          });
+        }
+
+        // Formatação automática ao pressionar Enter no input
+        if (sqlInput) {
+          sqlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+              e.preventDefault();
+              formatSqlBtn.click();
+            }
+          });
+          
+          // Formatar automaticamente se houver conteúdo pré-carregado
+          if (sqlInput.value.trim()) {
+            setTimeout(() => {
+              formatSqlBtn.click();
+            }, 500);
+          }
+        }
+      });
+    </script>
+    <script src="./assets/js/main.js"></script>
+  </body>
+</html> 
