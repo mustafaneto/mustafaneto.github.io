@@ -803,6 +803,11 @@ img {
   gap: 2rem;
 }
 
+.utilities__description{
+  color: var(--text-color-light);
+  margin-bottom: var(--mb-1);
+}
+
 .utilities__input-group,
 .utilities__output-group{
   display: flex;
@@ -847,25 +852,102 @@ img {
   justify-content: center;
 }
 
-/* Estilos específicos para a página do formatador SQL */
-.utilities__container {
+/* Estilos específicos para páginas de utilidades individuais */
+.formatador-sql .utilities__container,
+.pixel-art .utilities__container{
   grid-template-columns: 1fr;
 }
 
-.utilities__container .utilities__content {
+.formatador-sql .utilities__container .utilities__content,
+.pixel-art .utilities__container .utilities__content{
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
 }
 
-.utilities__textarea {
+.formatador-sql .utilities__textarea{
   min-height: 300px;
 }
 
-.utilities__output {
+.formatador-sql .utilities__output{
   background-color: var(--body-color);
   border-color: var(--first-color);
   font-weight: 500;
+}
+
+/* ==========================PIXEL ART========================= */
+.pixel-art {
+  --gap: 12px;
+}
+
+.pixel-art .row{
+  display: flex;
+  gap: var(--gap);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pixel-art .row--top{
+  margin-top: var(--gap);
+}
+
+.pixel-art .row--start{
+  align-items: flex-start;
+}
+
+.pixel-art .col{
+  display: grid;
+  gap: 8px;
+}
+
+.pixel-art canvas{
+  image-rendering: pixelated;
+  border: 1px solid var(--text-color-light);
+  background: var(--container-color);
+  cursor: crosshair;
+}
+
+.pixel-art .kv{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.pixel-art .swatch{
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--text-color-light);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.pixel-art label{
+  white-space: nowrap;
+}
+
+.pixel-art input[type="number"]{
+  width: 7em;
+}
+
+.pixel-art fieldset{
+  border: 1px solid var(--text-color-light);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.pixel-art legend{
+  font-size: 0.95rem;
+  color: var(--title-color);
+  padding: 0 6px;
+}
+
+.pixel-art .pixel-notes{
+  max-width: 360px;
+  font-size: 0.92rem;
+  color: var(--title-color);
+}
+
+.pixel-art button{
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 .contact__container{
