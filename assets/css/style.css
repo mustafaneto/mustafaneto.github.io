@@ -50,12 +50,18 @@ body.dark-theme{
   --first-color-second: hsl(var(--hue-color), 88%, 44%);
   --title-color: hsl(var(--hue-color), 8%, 95%);
   --text-color: hsl(var(--hue-color), 8%, 75%);
+  --text-color-light: hsl(var(--hue-color), 8%, 65%);
   --social-color: hsl(var(--hue-color), 8%, 0%);
   --input-color: hsl(var(--hue-color), 29%, 16%);
   --body-color: hsl(var(--hue-color), 28%, 12%);
   --container-color: hsl(var(--hue-color), 29%, 16%);
   --scroll-bar-color: hsl(var(--hue-color), 12%, 48%);
   --scroll-thumb-color: hsl(var(--hue-color), 88%, 44%);
+}
+
+/* Garantir que o dark mode seja aplicado corretamente */
+body.dark-theme * {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @media screen and (min-width: 968px) {
@@ -1116,6 +1122,7 @@ img {
 
   body{
     margin: 0;
+    padding-top: calc(var(--header-heigth) + 1.5rem);
   }
 
   .section{

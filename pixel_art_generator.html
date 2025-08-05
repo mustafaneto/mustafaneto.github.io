@@ -11,10 +11,14 @@
 <link rel="stylesheet" href="./assets/css/style.css" />
 <style>
   :root { --gap: 12px; }
-  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, sans-serif; margin: 16px; }
+  body { 
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, sans-serif; 
+    margin: 16px; 
+    padding-top: calc(var(--header-heigth) + 2rem);
+  }
   .row { display: flex; gap: var(--gap); align-items: center; flex-wrap: wrap; }
   .col { display: grid; gap: 8px; }
-  canvas { image-rendering: pixelated; border: 1px solid #ccc; background: #fff; }
+  canvas { image-rendering: pixelated; border: 1px solid #ccc; background: #fff; cursor: crosshair; }
   .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .swatch { width: 24px; height: 24px; border: 1px solid #aaa; display: inline-block; vertical-align: middle; }
   label { white-space: nowrap; }
@@ -48,6 +52,7 @@
   </nav>
 </header>
 <h1>Pixel Inspector</h1>
+<p style="color: #666; margin-bottom: 12px;">Clique em um pixel para selecioná-lo e ver suas informações. Clique novamente no mesmo pixel para deselecionar.</p>
 <div class="row">
   <label>Image: <input id="file" type="file" accept="image/*"></label>
   <label>Target W: <input id="tw" type="number" value="75" min="1"></label>
@@ -69,6 +74,7 @@
     <div class="row">
       <button id="copyHex" disabled>Copy HEX</button>
       <button id="copyRGB" disabled>Copy RGB</button>
+      <button id="copyColor" disabled>Copy Color</button>
     </div>
     <fieldset>
       <legend>Custom Origin</legend>
@@ -78,7 +84,7 @@
       <div class="row">
         <label>OX: <input id="originX" type="number" value="0"></label>
         <label>OY: <input id="originY" type="number" value="0"></label>
-        <button id="setFromHover" title="Set OX/OY from current image pixel">Set from Hover</button>
+        <button id="setFromHover" title="Set OX/OY from selected pixel">Set from Selection</button>
       </div>
       <div class="row" style="align-items:flex-start;">
         <fieldset>
@@ -140,6 +146,7 @@
   const sw = $('sw');
   const copyHex = $('copyHex');
   const copyRGB = $('copyRGB');
+  const copyColor = $('copyColor');
   const customOriginEl = $('customOrigin');
   const originXEl = $('originX');
   const originYEl = $('originY');
@@ -199,6 +206,17 @@
       }
       ctx.restore();
     }
+    
+    // Desenha indicador do pixel selecionado
+    if (selectedPixel) {
+      ctx.save();
+      ctx.strokeStyle = '#ff0000';
+      ctx.lineWidth = 2;
+      const x = selectedPixel.x * zoom;
+      const y = selectedPixel.y * zoom;
+      ctx.strokeRect(x, y, zoom, zoom);
+      ctx.restore();
+    }
   }
   function getPixel(x, y) {
     if (x < 0 || y < 0 || x >= base.width || y >= base.height) return null;
@@ -229,14 +247,15 @@
       rgbEl.textContent = '–';
       hexEl.textContent = '–';
       sw.style.background = 'transparent';
-      copyHex.disabled = copyRGB.disabled = true;
+      copyHex.disabled = copyRGB.disabled = copyColor.disabled = true;
     } else {
       rgbEl.textContent = p.rgb;
       hexEl.textContent = p.hex;
       sw.style.background = p.hex;
-      copyHex.disabled = copyRGB.disabled = false;
+      copyHex.disabled = copyRGB.disabled = copyColor.disabled = false;
       copyHex.onclick = () => navigator.clipboard.writeText(p.hex);
       copyRGB.onclick = () => navigator.clipboard.writeText(p.rgb);
+      copyColor.onclick = () => navigator.clipboard.writeText(p.hex);
     }
   }
   function imageCoordsFromMouse(e) {
@@ -254,23 +273,29 @@
     }
     return { px, py };
   }
-  canvas.addEventListener('mousemove', (e) => {
+  let selectedPixel = null;
+  
+  canvas.addEventListener('click', (e) => {
     const { px, py } = imageCoordsFromMouse(e);
-    updateInfo(px, py);
-  });
-  canvas.addEventListener('click', () => {
-    const text = hexEl.textContent;
-    if (text && text !== '–') navigator.clipboard.writeText(text);
+    
+    // Se clicar no mesmo pixel, limpa a seleção
+    if (selectedPixel && selectedPixel.x === px && selectedPixel.y === py) {
+      selectedPixel = null;
+      updateInfo(null, null);
+    } else {
+      // Seleciona o novo pixel
+      selectedPixel = { x: px, y: py };
+      updateInfo(px, py);
+    }
+    
+    // Redesenha o canvas para mostrar o indicador
+    draw();
   });
   setFromHoverBtn.addEventListener('click', () => {
-    const last = iposEl.textContent;
-    if (!last || last === '–') return;
-    const m = last.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (!m) return;
-    originXEl.value = +m[1];
-    originYEl.value = +m[2];
-    const m2 = iposEl.textContent.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (m2) updateInfo(+m2[1], +m2[2]);
+    if (!selectedPixel) return;
+    originXEl.value = selectedPixel.x;
+    originYEl.value = selectedPixel.y;
+    updateInfo(selectedPixel.x, selectedPixel.y);
   });
   zoomEl.addEventListener('input', e => setZoom(e.target.value));
   gridEl.addEventListener('change', draw);
@@ -279,20 +304,16 @@
   twEl.addEventListener('change', () => currentImg && loadImage(currentImg));
   thEl.addEventListener('change', () => currentImg && loadImage(currentImg));
   customOriginEl.addEventListener('change', () => {
-    const m = iposEl.textContent.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (m) updateInfo(+m[1], +m[2]);
+    if (selectedPixel) updateInfo(selectedPixel.x, selectedPixel.y);
   });
   originXEl.addEventListener('input', () => {
-    const m = iposEl.textContent.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (m) updateInfo(+m[1], +m[2]);
+    if (selectedPixel) updateInfo(selectedPixel.x, selectedPixel.y);
   });
   originYEl.addEventListener('input', () => {
-    const m = iposEl.textContent.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (m) updateInfo(+m[1], +m[2]);
+    if (selectedPixel) updateInfo(selectedPixel.x, selectedPixel.y);
   });
   originModeEls.forEach(r => r.addEventListener('change', () => {
-    const m = iposEl.textContent.match(/\((\-?\d+),\s*(\-?\d+)\)/);
-    if (m) updateInfo(+m[1], +m[2]);
+    if (selectedPixel) updateInfo(selectedPixel.x, selectedPixel.y);
   }));
   let currentImg = null;
   file.addEventListener('change', () => {
