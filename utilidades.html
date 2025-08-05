@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utilidades | Mustafa Neto</title>
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <style>
+      .utilities__container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .utilities__content {
+        cursor: pointer;
+        text-align: center;
+      }
+      .utilities__header {
+        flex-direction: column;
+        justify-content: center;
+      }
+      .utilities__header i {
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header" id="header">
+      <nav class="nav container">
+        <a href="index.html" class="nav__logo">Mustafa</a>
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list grid">
+            <li class="nav__item">
+              <a href="index.html" class="nav__link">
+                <i class="uil uil-estate nav__icon"></i>
+                Voltar ao Portfólio
+              </a>
+            </li>
+          </ul>
+          <i class="uil uil-times nav__close" id="nav-close"></i>
+        </div>
+        <div class="nav__btns">
+          <i class="uil uil-moon change-theme" id="theme-button"></i>
+          <div class="nav__toggle" id="nav-toggle">
+            <i class="uil uil-apps"></i>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="main">
+      <section class="utilities section" id="utilities">
+        <h2 class="section__title">Utilidades</h2>
+        <span class="section__subtitle">Ferramentas que desenvolvi</span>
+        <div class="utilities__container container grid">
+          <a href="formatador_sql.html" class="utilities__content">
+            <div class="utilities__header">
+              <i class="uil uil-database utilities__icon"></i>
+              <h3 class="utilities__title">Formatador SQL</h3>
+            </div>
+          </a>
+          <a href="pixel_art_generator.html" class="utilities__content">
+            <div class="utilities__header">
+              <i class="uil uil-brush-alt utilities__icon"></i>
+              <h3 class="utilities__title">Pixel Art</h3>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="footer__bg">
+        <div class="footer__container container grid">
+          <div>
+            <h1 class="footer__title">Mustafa</h1>
+            <span class="footer__subtitle"> Desenvolvedor Fullstack </span>
+          </div>
+          <ul class="footer__links">
+            <li>
+              <a href="index.html" class="footer__link">Portfólio</a>
+            </li>
+          </ul>
+          <div class="footer__socials">
+            <a
+              href="https://github.com/mustafaneto"
+              target="_blank"
+              class="footer__social"
+              ><i class="uil uil-github-alt"></i
+            ></a>
+            <a
+              href="https://www.linkedin.com/in/mustafaneto/"
+              target="_blank"
+              class="footer__social"
+              ><i class="uil uil-linkedin-alt"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <a href="#" class="scrollup" id="scroll-up">
+      <i class="uil uil-arrow-up scrollup__icon"></i>
+    </a>
+    <script src="./assets/js/main.js"></script>
+  </body>
+</html>
