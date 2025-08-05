@@ -165,6 +165,71 @@
   let base = document.createElement('canvas');
   let bctx = base.getContext('2d', { willReadFrequently: true });
   let zoom = +zoomEl.value;
+  const palette = [
+    [0, 0, 0],
+    [60, 60, 60],
+    [120, 120, 120],
+    [170, 170, 170],
+    [210, 210, 210],
+    [255, 255, 255],
+    [96, 0, 24],
+    [165, 14, 30],
+    [237, 28, 36],
+    [250, 128, 114],
+    [228, 92, 26],
+    [255, 127, 39],
+    [246, 170, 9],
+    [249, 221, 59],
+    [255, 250, 188],
+    [156, 132, 49],
+    [197, 173, 49],
+    [232, 212, 95],
+    [74, 107, 58],
+    [90, 148, 74],
+    [132, 197, 115],
+    [14, 185, 104],
+    [19, 230, 123],
+    [135, 255, 94],
+    [12, 129, 110],
+    [16, 174, 166],
+    [19, 225, 190],
+    [15, 121, 159],
+    [96, 247, 242],
+    [187, 250, 242],
+    [40, 80, 158],
+    [64, 147, 228],
+    [125, 199, 255],
+    [77, 49, 184],
+    [107, 80, 246],
+    [153, 177, 251],
+    [74, 66, 132],
+    [122, 113, 196],
+    [181, 174, 241],
+    [120, 12, 153],
+    [170, 56, 185],
+    [224, 159, 249],
+    [203, 0, 122],
+    [236, 31, 128],
+    [243, 141, 169],
+    [155, 82, 73],
+    [209, 128, 120],
+    [250, 182, 164],
+    [104, 70, 52],
+    [149, 104, 42],
+    [219, 164, 99],
+    [123, 99, 82],
+    [156, 132, 107],
+    [214, 181, 148],
+    [209, 128, 81],
+    [248, 178, 119],
+    [255, 197, 165],
+    [109, 100, 63],
+    [148, 140, 107],
+    [205, 197, 158],
+    [51, 57, 65],
+    [109, 117, 141],
+    [179, 185, 209]
+  ];
   function currentOriginMode() {
     return [...originModeEls].find(r => r.checked)?.value || 'offset';
   }
@@ -190,7 +255,32 @@
       bctx.drawImage(src, 0, 0);
     }
     sizeEl.textContent = `${base.width} × ${base.height}`;
+    applyPalette();
     draw();
+  }
+
+  function applyPalette() {
+    const imgData = bctx.getImageData(0, 0, base.width, base.height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      let best = palette[0];
+      let bestDist = Infinity;
+      for (const col of palette) {
+        const dr = r - col[0];
+        const dg = g - col[1];
+        const db = b - col[2];
+        const dist = dr * dr + dg * dg + db * db;
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = col;
+        }
+      }
+      data[i] = best[0];
+      data[i + 1] = best[1];
+      data[i + 2] = best[2];
+    }
+    bctx.putImageData(imgData, 0, 0);
   }
   function draw() {
     canvas.width = base.width * zoom;
