@@ -948,6 +948,7 @@ img {
   border: 1px solid var(--text-color-light);
   border-radius: 8px;
   height: fit-content;
+  position: sticky;
   top: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -1026,7 +1027,7 @@ img {
   .info-panel {
     width: 100%;
     min-width: auto;
-    position: static;
+    position: sticky;
     order: -1;
   }
   
