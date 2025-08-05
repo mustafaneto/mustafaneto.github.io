@@ -62,9 +62,11 @@
                 <label>Zoom: <input id="zoom" type="range" min="1" max="32" step="1" value="8" /></label>
               </div>
 
-              <div class="row row--top">
-                <canvas id="view" width="600" height="600"></canvas>
-                <div class="col">
+              <div class="pixel-art-container">
+                <div class="canvas-container">
+                  <canvas id="view" width="800" height="600"></canvas>
+                </div>
+                <div class="info-panel">
                   <div class="kv">Image size (px): <span id="size">–</span></div>
                   <div class="kv">Cursor (displayed): <span id="pos">–</span></div>
                   <div class="kv">Image coords: <span id="ipos">–</span></div>
@@ -77,34 +79,37 @@
                     <button id="copyRGB" disabled>Copy RGB</button>
                     <button id="copyColor" disabled>Copy Color</button>
                   </div>
-                  <fieldset>
-                    <legend>Custom Origin</legend>
-                    <div class="row">
-                      <label><input id="customOrigin" type="checkbox" /> Use custom origin</label>
-                    </div>
-                    <div class="row">
-                      <label>OX: <input id="originX" type="number" value="0" /></label>
-                      <label>OY: <input id="originY" type="number" value="0" /></label>
-                      <button id="setFromHover" title="Set OX/OY from selected pixel">Set from Selection</button>
-                    </div>
-                    <div class="row row--start">
-                      <fieldset>
-                        <legend>Mode</legend>
-                        <label title="image (0,0) will be displayed as (OX, OY)">
-                          <input type="radio" name="originMode" value="offset" checked /> Offset
-                        </label><br />
-                        <label title="coord (0,0) equals image (OX, OY); e.g., set OX=1723, OY=2424">
-                          <input type="radio" name="originMode" value="anchor" /> Anchor
-                        </label>
-                      </fieldset>
-                      <div class="pixel-notes">
-                        <b>Offset</b>: displayed = (imgX + OX, imgY + OY).<br />
-                        <b>Anchor</b>: displayed = (imgX − OX, imgY − OY).<br />
-                        Example: to make <i>coord (0,0)</i> be image pixel <i>(1723,2424)</i>, choose <b>Anchor</b> and set OX=<b>1723</b>, OY=<b>2424</b>.
-                      </div>
-                    </div>
-                  </fieldset>
                 </div>
+              </div>
+              
+              <div class="custom-origin-section">
+                <fieldset>
+                  <legend>Custom Origin</legend>
+                  <div class="row">
+                    <label><input id="customOrigin" type="checkbox" /> Use custom origin</label>
+                  </div>
+                  <div class="row">
+                    <label>OX: <input id="originX" type="number" value="0" /></label>
+                    <label>OY: <input id="originY" type="number" value="0" /></label>
+                    <button id="setFromHover" title="Set OX/OY from selected pixel">Set from Selection</button>
+                  </div>
+                  <div class="row row--start">
+                    <fieldset>
+                      <legend>Mode</legend>
+                      <label title="image (0,0) will be displayed as (OX, OY)">
+                        <input type="radio" name="originMode" value="offset" checked /> Offset
+                      </label><br />
+                      <label title="coord (0,0) equals image (OX, OY); e.g., set OX=1723, OY=2424">
+                        <input type="radio" name="originMode" value="anchor" /> Anchor
+                      </label>
+                    </fieldset>
+                    <div class="pixel-notes">
+                      <b>Offset</b>: displayed = (imgX + OX, imgY + OY).<br />
+                      <b>Anchor</b>: displayed = (imgX − OX, imgY − OY).<br />
+                      Example: to make <i>coord (0,0)</i> be image pixel <i>(1723,2424)</i>, choose <b>Anchor</b> and set OX=<b>1723</b>, OY=<b>2424</b>.
+                    </div>
+                  </div>
+                </fieldset>
               </div>
             </div>
           </div>

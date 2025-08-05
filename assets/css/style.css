@@ -801,6 +801,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  height: 100%;
 }
 
 .utilities__description{
@@ -863,6 +864,8 @@ img {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
+  min-height: 80vh;
+  padding: 2rem;
 }
 
 .formatador-sql .utilities__textarea{
@@ -900,15 +903,61 @@ img {
   gap: 8px;
 }
 
+/* Novo layout para pixel art */
+.pixel-art-container {
+  display: flex;
+  gap: 20px;
+  margin-top: var(--gap);
+  align-items: flex-start;
+  margin-bottom: 20px;
+  min-height: 0;
+}
+
+.canvas-container {
+  min-width: 0;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 500px;
+}
+
+.info-panel {
+  width: 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--container-color);
+  border: 1px solid var(--text-color-light);
+  border-radius: 8px;
+  height: fit-content;
+  top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-origin-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--container-color);
+  border: 1px solid var(--text-color-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .pixel-art canvas{
   image-rendering: pixelated;
   border: 1px solid var(--text-color-light);
   background: var(--container-color);
   cursor: crosshair;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .pixel-art .kv{
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--text-color-light);
 }
 
 .pixel-art .swatch{
@@ -948,6 +997,48 @@ img {
 .pixel-art button{
   padding: 6px 10px;
   cursor: pointer;
+}
+
+/* Responsividade para telas menores */
+@media screen and (max-width: 1024px) {
+  .pixel-art-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .info-panel {
+    width: 100%;
+    min-width: auto;
+    position: static;
+    order: -1;
+  }
+  
+  .canvas-container {
+    justify-content: center;
+  }
+  
+  .pixel-art canvas {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .custom-origin-section {
+    margin-top: 16px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .pixel-art canvas {
+    max-width: 100%;
+  }
+  
+  .info-panel {
+    padding: 12px;
+  }
+  
+  .custom-origin-section {
+    padding: 16px;
+  }
 }
 
 .contact__container{
