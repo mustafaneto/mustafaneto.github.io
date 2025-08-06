@@ -986,6 +986,24 @@ img {
   vertical-align: middle;
 }
 
+.pixel-art .palette-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.pixel-art .palette-color {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--text-color-light);
+  cursor: pointer;
+}
+
+.pixel-art .palette-color.selected {
+  outline: 2px solid var(--first-color-second);
+}
+
 .pixel-art label{
   white-space: nowrap;
 }

@@ -81,6 +81,8 @@
                   </div>
                 </div>
               </div>
+
+              <div id="paletteBox" class="palette-box"></div>
               
               <div class="custom-origin-section">
                 <fieldset>
@@ -158,6 +160,7 @@
   const copyHex = $('copyHex');
   const copyRGB = $('copyRGB');
   const copyColor = $('copyColor');
+  const paletteBox = $('paletteBox');
   const customOriginEl = $('customOrigin');
   const originXEl = $('originX');
   const originYEl = $('originY');
@@ -166,6 +169,7 @@
   let base = document.createElement('canvas');
   let bctx = base.getContext('2d', { willReadFrequently: true });
   let zoom = +zoomEl.value;
+  let filterColor = null;
   const palette = [
     { r: 0, g: 0, b: 0, name: 'Black' },
     { r: 60, g: 60, b: 60, name: 'Dark Gray' },
@@ -231,6 +235,25 @@
     { r: 109, g: 117, b: 141, name: 'Slate' },
     { r: 179, g: 185, b: 209, name: 'Light Slate' }
   ];
+
+  palette.forEach(col => {
+    const el = document.createElement('div');
+    el.className = 'palette-color';
+    el.style.background = `rgb(${col.r}, ${col.g}, ${col.b})`;
+    el.title = col.name;
+    el.addEventListener('click', () => {
+      if (filterColor === col) {
+        filterColor = null;
+        el.classList.remove('selected');
+      } else {
+        filterColor = col;
+        [...paletteBox.children].forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+      }
+      draw();
+    });
+    paletteBox.appendChild(el);
+  });
   function currentOriginMode() {
     return [...originModeEls].find(r => r.checked)?.value || 'offset';
   }
@@ -288,7 +311,22 @@
     canvas.height = base.height * zoom;
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(base, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    if (filterColor) {
+      const imgData = bctx.getImageData(0, 0, base.width, base.height);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] !== filterColor.r || data[i + 1] !== filterColor.g || data[i + 2] !== filterColor.b) {
+          data[i + 3] = 0;
+        }
+      }
+      const tmp = document.createElement('canvas');
+      tmp.width = base.width;
+      tmp.height = base.height;
+      tmp.getContext('2d').putImageData(imgData, 0, 0);
+      ctx.drawImage(tmp, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    } else {
+      ctx.drawImage(base, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    }
     if (gridEl.checked && zoom >= 3) {
       ctx.save();
       ctx.strokeStyle = 'rgba(0,0,0,0.25)';
