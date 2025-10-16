@@ -71,7 +71,7 @@
                   <div class="kv">Cursor (displayed): <span id="pos">–</span></div>
                   <div class="kv">Image coords: <span id="ipos">–</span></div>
                   <div class="kv">
-                    Color: <span id="rgb">–</span> <span id="hex">–</span>
+                    Color: <span id="colorName">–</span> <span id="rgb">–</span> <span id="hex">–</span>
                     <span id="sw" class="swatch"></span>
                   </div>
                   <div class="row">
@@ -81,6 +81,8 @@
                   </div>
                 </div>
               </div>
+
+              <div id="paletteBox" class="palette-box"></div>
               
               <div class="custom-origin-section">
                 <fieldset>
@@ -152,11 +154,13 @@
   const posEl = $('pos');
   const iposEl = $('ipos');
   const rgbEl = $('rgb');
+  const colorNameEl = $('colorName');
   const hexEl = $('hex');
   const sw = $('sw');
   const copyHex = $('copyHex');
   const copyRGB = $('copyRGB');
   const copyColor = $('copyColor');
+  const paletteBox = $('paletteBox');
   const customOriginEl = $('customOrigin');
   const originXEl = $('originX');
   const originYEl = $('originY');
@@ -165,6 +169,91 @@
   let base = document.createElement('canvas');
   let bctx = base.getContext('2d', { willReadFrequently: true });
   let zoom = +zoomEl.value;
+  let filterColor = null;
+  const palette = [
+    { r: 0, g: 0, b: 0, name: 'Black' },
+    { r: 60, g: 60, b: 60, name: 'Dark Gray' },
+    { r: 120, g: 120, b: 120, name: 'Gray' },
+    { r: 170, g: 170, b: 170, name: 'Medium Gray' },
+    { r: 210, g: 210, b: 210, name: 'Light Gray' },
+    { r: 255, g: 255, b: 255, name: 'White' },
+    { r: 96, g: 0, b: 24, name: 'Deep Red' },
+    { r: 165, g: 14, b: 30, name: 'Dark Red' },
+    { r: 237, g: 28, b: 36, name: 'Red' },
+    { r: 250, g: 128, b: 114, name: 'Light Red' },
+    { r: 228, g: 92, b: 26, name: 'Dark Orange' },
+    { r: 255, g: 127, b: 39, name: 'Orange' },
+    { r: 246, g: 170, b: 9, name: 'Gold' },
+    { r: 249, g: 221, b: 59, name: 'Yellow' },
+    { r: 255, g: 250, b: 188, name: 'Light Yellow' },
+    { r: 156, g: 132, b: 49, name: 'Dark Goldenrod' },
+    { r: 197, g: 173, b: 49, name: 'Goldenrod' },
+    { r: 232, g: 212, b: 95, name: 'Light Goldenrod' },
+    { r: 74, g: 107, b: 58, name: 'Dark Olive' },
+    { r: 90, g: 148, b: 74, name: 'Olive' },
+    { r: 132, g: 197, b: 115, name: 'Light Olive' },
+    { r: 14, g: 185, b: 104, name: 'Dark Green' },
+    { r: 19, g: 230, b: 123, name: 'Green' },
+    { r: 135, g: 255, b: 94, name: 'Light Green' },
+    { r: 12, g: 129, b: 110, name: 'Dark Teal' },
+    { r: 16, g: 174, b: 166, name: 'Teal' },
+    { r: 19, g: 225, b: 190, name: 'Light Teal' },
+    { r: 15, g: 121, b: 159, name: 'Dark Cyan' },
+    { r: 96, g: 247, b: 242, name: 'Cyan' },
+    { r: 187, g: 250, b: 242, name: 'Light Cyan' },
+    { r: 40, g: 80, b: 158, name: 'Dark Blue' },
+    { r: 64, g: 147, b: 228, name: 'Blue' },
+    { r: 125, g: 199, b: 255, name: 'Light Blue' },
+    { r: 77, g: 49, b: 184, name: 'Dark Indigo' },
+    { r: 107, g: 80, b: 246, name: 'Indigo' },
+    { r: 153, g: 177, b: 251, name: 'Light Indigo' },
+    { r: 74, g: 66, b: 132, name: 'Dark Slate Blue' },
+    { r: 122, g: 113, b: 196, name: 'Slate Blue' },
+    { r: 181, g: 174, b: 241, name: 'Light Slate Blue' },
+    { r: 120, g: 12, b: 153, name: 'Dark Purple' },
+    { r: 170, g: 56, b: 185, name: 'Purple' },
+    { r: 224, g: 159, b: 249, name: 'Light Purple' },
+    { r: 203, g: 0, b: 122, name: 'Dark Pink' },
+    { r: 236, g: 31, b: 128, name: 'Pink' },
+    { r: 243, g: 141, b: 169, name: 'Light Pink' },
+    { r: 155, g: 82, b: 73, name: 'Dark Peach' },
+    { r: 209, g: 128, b: 120, name: 'Peach' },
+    { r: 250, g: 182, b: 164, name: 'Light Peach' },
+    { r: 104, g: 70, b: 52, name: 'Dark Brown' },
+    { r: 149, g: 104, b: 42, name: 'Brown' },
+    { r: 219, g: 164, b: 99, name: 'Light Brown' },
+    { r: 123, g: 99, b: 82, name: 'Dark Tan' },
+    { r: 156, g: 132, b: 107, name: 'Tan' },
+    { r: 214, g: 181, b: 148, name: 'Light Tan' },
+    { r: 209, g: 128, b: 81, name: 'Dark Belge' },
+    { r: 248, g: 178, b: 119, name: 'Belge' },
+    { r: 255, g: 197, b: 165, name: 'Light Belge' },
+    { r: 109, g: 100, b: 63, name: 'Dark Stone' },
+    { r: 148, g: 140, b: 107, name: 'Stone' },
+    { r: 205, g: 197, b: 158, name: 'Light Stone' },
+    { r: 51, g: 57, b: 65, name: 'Dark Slate' },
+    { r: 109, g: 117, b: 141, name: 'Slate' },
+    { r: 179, g: 185, b: 209, name: 'Light Slate' }
+  ];
+
+  palette.forEach(col => {
+    const el = document.createElement('div');
+    el.className = 'palette-color';
+    el.style.background = `rgb(${col.r}, ${col.g}, ${col.b})`;
+    el.title = col.name;
+    el.addEventListener('click', () => {
+      if (filterColor === col) {
+        filterColor = null;
+        el.classList.remove('selected');
+      } else {
+        filterColor = col;
+        [...paletteBox.children].forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+      }
+      draw();
+    });
+    paletteBox.appendChild(el);
+  });
   function currentOriginMode() {
     return [...originModeEls].find(r => r.checked)?.value || 'offset';
   }
@@ -190,14 +279,54 @@
       bctx.drawImage(src, 0, 0);
     }
     sizeEl.textContent = `${base.width} × ${base.height}`;
+    applyPalette();
     draw();
+  }
+
+  function applyPalette() {
+    const imgData = bctx.getImageData(0, 0, base.width, base.height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      let best = palette[0];
+      let bestDist = Infinity;
+      for (const col of palette) {
+        const dr = r - col.r;
+        const dg = g - col.g;
+        const db = b - col.b;
+        const dist = dr * dr + dg * dg + db * db;
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = col;
+        }
+      }
+      data[i] = best.r;
+      data[i + 1] = best.g;
+      data[i + 2] = best.b;
+    }
+    bctx.putImageData(imgData, 0, 0);
   }
   function draw() {
     canvas.width = base.width * zoom;
     canvas.height = base.height * zoom;
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(base, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    if (filterColor) {
+      const imgData = bctx.getImageData(0, 0, base.width, base.height);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] !== filterColor.r || data[i + 1] !== filterColor.g || data[i + 2] !== filterColor.b) {
+          data[i + 3] = 0;
+        }
+      }
+      const tmp = document.createElement('canvas');
+      tmp.width = base.width;
+      tmp.height = base.height;
+      tmp.getContext('2d').putImageData(imgData, 0, 0);
+      ctx.drawImage(tmp, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    } else {
+      ctx.drawImage(base, 0, 0, base.width, base.height, 0, 0, canvas.width, canvas.height);
+    }
     if (gridEl.checked && zoom >= 3) {
       ctx.save();
       ctx.strokeStyle = 'rgba(0,0,0,0.25)';
@@ -233,7 +362,8 @@
     const d = bctx.getImageData(x, y, 1, 1).data;
     const rgb = `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
     const hex = '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join('');
-    return { r: d[0], g: d[1], b: d[2], a: d[3], rgb, hex };
+    const name = palette.find(c => c.r === d[0] && c.g === d[1] && c.b === d[2])?.name || 'Unknown';
+    return { r: d[0], g: d[1], b: d[2], a: d[3], rgb, hex, name };
   }
   function displayFromImage(px, py) {
     const ox = +originXEl.value || 0;
@@ -254,18 +384,20 @@
     }
     const p = (px == null) ? null : getPixel(px, py);
     if (!p) {
+      colorNameEl.textContent = '–';
       rgbEl.textContent = '–';
       hexEl.textContent = '–';
       sw.style.background = 'transparent';
       copyHex.disabled = copyRGB.disabled = copyColor.disabled = true;
     } else {
+      colorNameEl.textContent = p.name;
       rgbEl.textContent = p.rgb;
       hexEl.textContent = p.hex;
       sw.style.background = p.hex;
       copyHex.disabled = copyRGB.disabled = copyColor.disabled = false;
       copyHex.onclick = () => navigator.clipboard.writeText(p.hex);
       copyRGB.onclick = () => navigator.clipboard.writeText(p.rgb);
-      copyColor.onclick = () => navigator.clipboard.writeText(p.hex);
+      copyColor.onclick = () => navigator.clipboard.writeText(p.name);
     }
   }
   function imageCoordsFromMouse(e) {
